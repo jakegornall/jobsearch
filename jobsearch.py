@@ -50,12 +50,17 @@ def request_page(page_url):
     BeautifulSoup object of the page content.
 
     """
-    page = requests.get(page_url)
-    if page.status_code == 200:
-        return BeautifulSoup(page.content, "lxml")
-    else:
-        print("REQUEST ERROR {}".format(page.status_code))
+    try:
+        page = requests.get(page_url)
+    except requests.exceptions.ConnectionError:
+        print("ERROR: CONNECTION ERROR FOR GIVEN URL")
         sys.exit()
+    else:
+        if page.status_code == 200:
+            return BeautifulSoup(page.content, "lxml")
+        else:
+            print("REQUEST ERROR {}".format(page.status_code))
+            sys.exit()
 
 
 def job_search_results(soup):
