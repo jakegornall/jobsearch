@@ -1,6 +1,12 @@
 #!/usr/bin/python3
 
-"""Contains a procedural approach to scraping job postings from Indeed.com."""
+"""
+    Title: Indeed.com Job Search Script
+    Author: Zach Churchill
+    Date: 12/22/16
+    Description: Displays the top search results from Indeed.com based on
+        search terms and location given by the user in the default browser.
+"""
 
 import re
 import sys
