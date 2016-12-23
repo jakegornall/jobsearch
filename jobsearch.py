@@ -5,6 +5,7 @@
 import re
 import sys
 import requests
+import webbrowser
 from bs4 import BeautifulSoup
 
 def prepare_url(base_url, search_terms):
@@ -57,6 +58,24 @@ def request_page(page_url):
         sys.exit()
 
 
+def job_search_results(soup):
+    """Retrives the top 5 results from Indeed.com by relevance.
+
+    Parameters
+    ----------
+    soup (BeautifulSoup) : BeautifulSoup object containing the HTML for
+        the given location and search terms for the job search.
+    """
+    counter = 0
+    for link in soup.find_all("a", {"data-tn-element": "jobTitle"}):
+        if counter < 5:
+            job_url = "https://www.indeed.com" + link.get("href")
+            webbrowser.open(job_url, new=0, autoraise=True)
+            counter += 1
+        else:
+            break
+
+
 def main():
     base_url = "https://www.indeed.com/jobs?q={search_terms}&l={city}"
     search_terms = {"city": "Columbus%2C+OH", 
@@ -64,6 +83,7 @@ def main():
 
     page_url = prepare_url(base_url, search_terms)
     soup = request_page(page_url)
+    job_search_results(soup)
 
 
 if __name__ == "__main__":
