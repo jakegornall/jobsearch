@@ -90,7 +90,7 @@ def get_num_search_results():
         num_results = input(search_results_prompt)
         try:
             num_results = int(num_results)
-        except TypeError:
+        except ValueError:
             print("ERROR: Enter a number.\n")
         else:
             if num_results > 0 and num_results < 10:
