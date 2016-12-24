@@ -93,7 +93,7 @@ def get_num_search_results():
         except TypeError:
             print("ERROR: Enter a number.\n")
         else:
-            if num_results < 10:
+            if num_results > 0 and num_results < 10:
                 break
 
     print("{} results will be retrieved momentarily.".format(num_results))
