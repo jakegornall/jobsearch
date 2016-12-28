@@ -119,13 +119,12 @@ def prepare_url(base_url, user_data):
     try:
         page_url = base_url.format(**user_data)
     except KeyError:
-        url_list = []
-        last = 0
-        for braces in re.finditer('{\w*}', base_url):
-            url_list.append(base_url[last:braces.span()[0]])
-            last = braces.span()[1]
-        page_url = ''.join(url_list)
+        msg = "{} keys supplied, but {} keys are needed"
+        found_keys = [key for key in user_data.keys()]
+        necessary_keys = [key[1:-1] for key in re.findall('{\w+}', base_url)]
+        print(msg.format(found_keys, necessary_keys))
         pass
+        sys.exit()
     return page_url
 
 
