@@ -13,54 +13,69 @@ class GetDataApp(tk.Frame):
         self._setWidgets()
 
     def _initializeWidgets(self):
-        loc_frame = tk.Frame(self.root)
+        self.loc_frame = tk.Frame(self.root)
         loc_prompts = ["Input city name:", "Select state abbreviation:"]
-        self.city_label = tk.Label(loc_frame, text=loc_prompts[0])
-        self.city_entry = tk.Entry(loc_frame)
+        self.city_label = tk.Label(self.loc_frame, text=loc_prompts[0])
+        self.city_entry = tk.Entry(self.loc_frame)
 
-        self.state_label = tk.Label(loc_frame, text=loc_prompts[1])
-        self.state_lbox = tk.Listbox(loc_frame, height=6, justify=tk.CENTER)
+        self.state_label = tk.Label(self.loc_frame, text=loc_prompts[1])
+        self.state_lbox = tk.Listbox(
+                                self.loc_frame,
+                                height=6,
+                                justify=tk.CENTER
+                                )
         for state in self.state_abbrs:
             self.state_lbox.insert(tk.END, state)
 
-        terms_frame = tk.Frame(self.root)
+        self.terms_frame = tk.Frame(self.root)
         prompt = "Input search terms:\n(separate with commas)"
-        self.search_terms_label = tk.Label(terms_frame, text=prompt)
-        self.search_terms_entry = tk.Entry(terms_frame)
+        self.search_terms_label = tk.Label(self.terms_frame, text=prompt)
+        self.search_terms_entry = tk.Entry(self.terms_frame)
 
-        results_frame = tk.Frame(self.root)
+        self.results_frame = tk.Frame(self.root)
         prompt = "How many search results to display? (Check one)"
-        self.num_results_label = tk.Label(results_frame, text=prompt)
-
+        self.num_results_label = tk.Label(self.results_frame, text=prompt)
         self.num_results_vars = [tk.IntVar() for _ in range(3, 11)]
         self.num_results_chkbtns = []
         for i in range(3, 11):
-            self.num_results_chkbtns.append(tk.Checkbutton(results_frame, \
-                    text=i, variable=self.num_results_vars[i-3]))
+            chkbtn = tk.Checkbutton(
+                            self.results_frame,
+                            text=i,
+                            variable=self.num_results_vars[i-3]
+                            )
+            self.num_results_chkbtns.append(chkbtn)
 
-        bottom_frame = tk.Frame(self.root)
-        self.confirm_button = tk.Button(bottom_frame, text="Confirm", \
-                command=self._extractEntryFields)
-        self.quit_button = tk.Button(bottom_frame, text="Quit", \
-                command=self.quit)
+        self.btns_frame = tk.Frame(self.root)
+        self.confirm_button = tk.Button(
+                                    self.btns_frame,
+                                    text="Confirm",
+                                    command=self._extractEntryFields
+                                    )
+        self.confirm_button.bind("<Return>", self._extractEntryFields)
+        self.quit_button = tk.Button(
+                                self.btns_frame,
+                                text="Quit",
+                                command=self._exitApp
+                                )
+        self.quit_button.bind("<Return>", self._exitApp)
 
     def _setWidgets(self):
-        loc_frame.pack()
+        self.loc_frame.pack()
         self.city_label.pack()
         self.city_entry.pack()
         self.state_label.pack()
         self.state_lbox.pack()
 
-        terms_frame.pack()
+        self.terms_frame.pack()
         self.search_terms_label.pack(side=tk.LEFT)
         self.search_terms_entry.pack(side=tk.LEFT)
 
-        results_frame.pack()
+        self.results_frame.pack()
         self.num_results_label.pack(side=tk.TOP)
         for num_results_chkbtn in self.num_results_chkbtns:
             num_results_chkbtn.pack(side=tk.LEFT)
 
-        bottom_frame.pack()
+        self.btns_frame.pack()
         self.confirm_button.pack(side=tk.LEFT)
         self.quit_button.pack(side=tk.LEFT)
 
@@ -81,7 +96,7 @@ class GetDataApp(tk.Frame):
         num_results = num_results_idx + 3  # Because user given choice of 3-10
         return num_results
 
-    def _extractEntryFields(self):
+    def _extractEntryFields(self, *event):
         """Retrieves the input data from the entry fields in the app."""
         if self._verifyNumResults():
             self.city = self.city_entry.get()
@@ -95,6 +110,9 @@ class GetDataApp(tk.Frame):
         else:
             msg = "Check only one box for\nthe number of results."
             messagebox.showinfo("Indeed.com Job Search", msg)
+
+    def _exitApp(self, *event):
+        self.root.quit()
 
     def getData(self):
         """Creates a dictionary of the data provided from the app.
