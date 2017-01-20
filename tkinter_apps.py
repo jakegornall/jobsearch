@@ -8,9 +8,11 @@ class GetDataApp(tk.Frame):
         tk.Frame.__init__(self, root)
         self.root = root
         self.state_abbrs = state_abbrs
-        self.createWidgets()
 
-    def createWidgets(self):
+        self._initializeWidgets()
+        self._setWidgets()
+
+    def _initializeWidgets(self):
         loc_frame = tk.Frame(self.root)
         loc_prompts = ["Input city name:", "Select state abbreviation:"]
         self.city_label = tk.Label(loc_frame, text=loc_prompts[0])
@@ -21,66 +23,74 @@ class GetDataApp(tk.Frame):
         for state in self.state_abbrs:
             self.state_lbox.insert(tk.END, state)
 
+        terms_frame = tk.Frame(self.root)
+        prompt = "Input search terms:\n(separate with commas)"
+        self.search_terms_label = tk.Label(terms_frame, text=prompt)
+        self.search_terms_entry = tk.Entry(terms_frame)
+
+        results_frame = tk.Frame(self.root)
+        prompt = "How many search results to display? (Check one)"
+        self.num_results_label = tk.Label(results_frame, text=prompt)
+
+        self.num_results_vars = [tk.IntVar() for _ in range(3, 11)]
+        self.num_results_chkbtns = []
+        for i in range(3, 11):
+            self.num_results_chkbtns.append(tk.Checkbutton(results_frame, \
+                    text=i, variable=self.num_results_vars[i-3]))
+
+        bottom_frame = tk.Frame(self.root)
+        self.confirm_button = tk.Button(bottom_frame, text="Confirm", \
+                command=self._extractEntryFields)
+        self.quit_button = tk.Button(bottom_frame, text="Quit", \
+                command=self.quit)
+
+    def _setWidgets(self):
         loc_frame.pack()
         self.city_label.pack()
         self.city_entry.pack()
         self.state_label.pack()
         self.state_lbox.pack()
 
-        terms_frame = tk.Frame(self.root)
-        prompt = "Input search terms:\n(separate with commas)"
-        self.search_terms_label = tk.Label(terms_frame, text=prompt)
-        self.search_terms_entry = tk.Entry(terms_frame)
         terms_frame.pack()
         self.search_terms_label.pack(side=tk.LEFT)
         self.search_terms_entry.pack(side=tk.LEFT)
 
-        results_frame = tk.Frame(self.root)
-        prompt = "How many search results to display? (Check one)"
-        self.num_results_label = tk.Label(results_frame, text=prompt)
         results_frame.pack()
         self.num_results_label.pack(side=tk.TOP)
-        self.num_results_chkbtns = [tk.IntVar() for _ in range(3, 11)]
-        for i in range(3, 11):
-            tk.Checkbutton(results_frame, text=i, \
-                    variable=self.num_results_chkbtns[i-3]).pack(side=tk.LEFT)
+        for num_results_chkbtn in self.num_results_chkbtns:
+            num_results_chkbtn.pack(side=tk.LEFT)
 
-        bottom_frame = tk.Frame(self.root)
-        self.confirm_button = tk.Button(bottom_frame, text="Confirm", \
-                command=self.getEntryFields)
-        self.quit_button = tk.Button(bottom_frame, text="Quit", \
-                command=self.quit)
         bottom_frame.pack()
         self.confirm_button.pack(side=tk.LEFT)
         self.quit_button.pack(side=tk.LEFT)
 
-    def verifyNumResults(self):
+    def _verifyNumResults(self):
         """Checks if only one button is selected."""
         check = 0
-        for chkbtn in self.num_results_chkbtns:
+        for chkbtn in self.num_results_vars:
             value = chkbtn.get()
             check += value
         if check == 1:
             return True
         return False
 
-    def getNumResults(self):
+    def _getNumResults(self):
         """Returns the number of results."""
-        check_btns = [chkbtn.get() for chkbtn in self.num_results_chkbtns]
-        num_results_idx = check_btns.index(max(check_btns))
+        check_btns_vals = [chkbtn.get() for chkbtn in self.num_results_vars]
+        num_results_idx = check_btns_vals.index(max(check_btns_vals))
         num_results = num_results_idx + 3  # Because user given choice of 3-10
         return num_results
 
-    def getEntryFields(self):
+    def _extractEntryFields(self):
         """Retrieves the input data from the entry fields in the app."""
-        if self.verifyNumResults():
+        if self._verifyNumResults():
             self.city = self.city_entry.get()
 
             state_idx = self.state_lbox.curselection()
             self.state = self.state_lbox.get(self.state_lbox.curselection())
 
             self.search_terms = self.search_terms_entry.get()
-            self.num_results = self.getNumResults()
+            self.num_results = self._getNumResults()
             self.quit()
         else:
             msg = "Check only one box for\nthe number of results."
