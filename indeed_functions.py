@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 
 """
-    Title: Indeed.com Job Search Script
+                    Indeed.com Job Search Functions
     Author: Zach Churchill
-    Date: 12/22/16
-    Description: Displays the top search results from Indeed.com based on
-        search terms and location given by the user in the default browser.
+    Python Version: 3.5.2
+    Description: Functions used specifically to format and open job postings
+        from Indeed.com - thus, some values such as the location format, base
+        url, and HTML tags have been hardcoded. 
 """
 
 import re
@@ -15,116 +16,64 @@ import webbrowser
 from bs4 import BeautifulSoup
 
 
-def get_location(location_format):
-    """Prompts the user for the location to use in the job search.
+def format_location(user_data):
+    """Formats the city and state into the format required by the url for
+    Indeed.com.
 
     Parameters
-    ----------
-    location_format (str) : Formatted string with the correct placement
-        of the city and and state abbreviation.
+    ==========
+    user_data (dict) : Dict of user data with keys corresponding the state and
+        city.
 
     Returns
-    -------
+    =======
     location (str) : String containing the city and state abbreviation
         in the corresponding places in the location_format parameter.
 
     """
-    city_prompt = "Enter the city: "
-    state_prompt = "Enter the state abbreviation, i.e. OH for Ohio: "
-    while True:
-        city_input = input(city_prompt)
-        state_input = input(state_prompt)
-        if len(state_input) == 2:
-            check_prompt = "Is {}, {} correct? (Y/N)\n-> "
-            check_input = input(check_prompt.format(city_input, state_input))
-            if check_input.lower() == 'y':
-                break
-            else:
-                print("Let's try again.\n")
-
-    location = location_format.format(city=city_input, state=state_input)
+    location_format = "{city}%2C+{state}"
+    location = location_format.format(**user_data)
     return location
 
+def format_search_terms(user_data):
+    """Formats the city and state into the format required by the url for
+    Indeed.com.
 
-def get_search_terms():
-    """Prompts the user for the search terms to be used in the job search.
+    Parameters
+    ==========
+    user_data (dict) : Dict of user data with a key corresponding to the search
+        terms.
 
     Returns
-    -------
-    search_terms (str) : Search terms given by user in a string with +'s
-        instead of spaces, e.g. search terms given by the user are 
-        ["human resources", "communications"], so the the search_terms 
-        string returned is "human+resources+communications".
+    =======
+    search_terms_str (str) : String containing the search terms entered by the
+        user with +'s in each space, i.e. ['Python', 'Data science'] ->
+        'Python+Data+science'.
 
     """
-    input_terms = []
-    search_terms_prompt = "Enter a search term (enter 'done' when finished): "
-    finished = False
-    while not finished:
-        search_term = input(search_terms_prompt)
-        if search_term.lower() == 'done':
-            finished = True
-        else:
-            input_terms.append(search_term)
-
+    input_terms = user_data["search_terms"]
     # First, add +'s inbetween terms with phrases
-    search_terms_list = ['+'.join(term.split()) for term in input_terms]
+    search_terms = ['+'.join(term.split()) for term in input_terms]
     # Then, add +'s inbetween the terms themselves
-    search_terms = '+'.join(search_terms_list)
-
-    return search_terms
-
-
-def get_num_search_results():
-    """Prompts user to input the number of search results desired, with a 
-    limit of 10.
-
-    Returns
-    -------
-    num_search_results (int) : Integer representing the number of search
-        results that the user desires to see.
-
-    """
-    search_results_prompt = "Enter the number of search results desired: "
-    while True:
-        num_results = input(search_results_prompt)
-        try:
-            num_results = int(num_results)
-        except ValueError:
-            print("ERROR: Enter a number.\n")
-        else:
-            if num_results > 0 and num_results < 10:
-                break
-
-    print("{} results will be retrieved momentarily.".format(num_results))
-    return num_results
+    search_terms_str = '+'.join(search_terms)
+    return search_terms_str
 
 
-def prepare_url(base_url, user_data):
+def prepare_url(user_data):
     """Prepares the base url of Indeed.com with the possible search terms.
 
     Parameters
-    ----------
-    base_url (str) : Pre-formatted string with places to add search terms
-        using keyword arguments.
-    
-    user_data (dict) : Dict of keys corresponding to the format keyword
-        arguments in the base url.
+    ==========
+    user_data (dict) : Dict of user data with a key corresponding to the search
+        terms and location.
 
     Returns
-    -------
+    =======
     page_url (str) : String of url with search terms.
 
     """
-    try:
-        page_url = base_url.format(**user_data)
-    except KeyError:
-        msg = "{} keys supplied, but {} keys are needed"
-        found_keys = [key for key in user_data.keys()]
-        necessary_keys = [key[1:-1] for key in re.findall('{\w+}', base_url)]
-        print(msg.format(found_keys, necessary_keys))
-        pass
-        sys.exit()
+    base_url = "https://www.indeed.com/jobs?q={search_terms_str}&l={location}"
+    page_url = base_url.format(**user_data)
     return page_url
 
 
@@ -155,13 +104,13 @@ def request_page(page_url):
 
 
 def job_search_results(soup, num_search_results):
-    """Retrives the top 5 results from Indeed.com by relevance.
+    """Retrives the number of results from Indeed.com (by relevance).
 
     Parameters
     ----------
     soup (BeautifulSoup) : BeautifulSoup object containing the HTML for
         the given location and search terms for the job search.
-    
+
     num_search_results (int) : Integer representing the number of search
         results that the user desires to see.
 
@@ -170,26 +119,7 @@ def job_search_results(soup, num_search_results):
     for link in soup.find_all("a", {"data-tn-element": "jobTitle"}):
         if counter < num_search_results:
             job_url = "https://www.indeed.com" + link.get("href")
-            webbrowser.open(job_url, new=0, autoraise=True)
+            webbrowser.open(job_url, new=0, autoraise=False)
             counter += 1
         else:
             break
-
-
-def main():
-    # Get user input for location and search terms for job search.
-    location_format = "{city}%2C+{state}"
-    location = get_location(location_format)
-    search_terms = get_search_terms()
-    num_search_results = get_num_search_results()
-
-    base_url = "https://www.indeed.com/jobs?q={search_terms}&l={location}"
-    user_data = {"location": location, "search_terms": search_terms}
-
-    page_url = prepare_url(base_url, user_data)
-    soup = request_page(page_url)
-    job_search_results(soup, num_search_results)
-
-
-if __name__ == "__main__":
-    main()
