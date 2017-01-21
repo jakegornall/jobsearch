@@ -1,7 +1,10 @@
 # Motivation
 
-Simple script that allows the user to search the top results given by Indeed.com
-according to given search terms and location, by relevance. The end result of this
-script is opening each URL for the jobs in the top results in the deafult browser,
-provided the user has internet connection.
- 
+After writing the simple script to that allows the user to search the top results given by Indeed.com
+according to given search terms and location collected in the terminal, I decided to create a GUI for 
+easier data collection. The end result of the project will be an executable that can be placed on a
+desktop for easy searching of jobs.
+
+This project has tested me and helped develop my skills not only in becoming a Pythonic programmer, 
+but also in software development practices, i.e. writing tests for validation, using Git to track 
+my progress, and planning before coding.
