@@ -1,28 +1,51 @@
 #!/usr/bin/python3
+"""
+                    App for Collecting User Data for Indeed.com
+    Author: Zach Churchill
+    Python Version: 3.5.2
+    Description: Created using tkinter, this app displays a form to the user
+        with the following fields: city, state, search terms, and number of
+        results. Both the city and search terms require the user to fill in
+        information via the keyboard, and user input is not validation in that
+        the user can enter whatever he/she desires. The state field is a list
+        box that allows the user to choose the corresponding state abbreviation
+        for their location. Lastly, the number of search terms is a set of
+        radio buttons that, by default, only allow the user to fill in one.
+        An important feature of the app is that the user must fill in/select
+        an option from each field in order to continue; that is, the app does
+        not allow the user to leave fields blank/unchecked.
+    Implementation: In order to implement the app, the following lines of code
+        must be placed in a function:
+            > root = tk.Tk()
+            > app = GetDataApp(root)
+            > app.mainloop()
+        To retrieve the data collected via the app:
+            > data = app.get_data()
+        Lastly, after retrieving the data, destroy the app:
+            > app.destroy()
+"""
 import csv
 import tkinter as tk
 from tkinter import messagebox as msgBox
 
-
 class GetDataApp(tk.Frame):
+    """Displays a GUI for the retrieval of data corresponding to information
+    needed for Indeed.com.
+
+    """
     STATE_ABBR_FILE = "postal_codes.txt"
 
     def __init__(self, root):
         tk.Frame.__init__(self, root)
         self.root = root
-        self.state_abbrs = GetDataApp.getStateAbbr()
+        self.state_abbrs = GetDataApp._get_state_abbr()
 
-        self._setAppWindow()
-        self._initializeWidgets()
-        self._setWidgets()
+        self._set_app_window()
+        self._initialize_widgets()
+        self._set_widgets()
 
-    def _getStateAbbr(state_abbr_file):
+    def _get_state_abbr():
         """Reads the state abbreviations from a text file given by the input.
-
-        Parameters
-        ==========
-        state_abbr_file (str) : String corresponding to the text file with the
-                state abbreviations.
 
         Returns
         =======
@@ -36,12 +59,12 @@ class GetDataApp(tk.Frame):
                 state_abbrs.append(row[0])
         return state_abbrs
 
-    def _setAppWindow(self):
+    def _set_app_window(self):
         """Sets the features of the app window."""
         self.root.title("Indeed.com Job Search App")
         self.root.resizable(0,0)
 
-    def _initializeWidgets(self):
+    def _initialize_widgets(self):
         """Creates and initializes all of the necessary widgets with text,
         commands, and key bindings.
 
@@ -54,7 +77,7 @@ class GetDataApp(tk.Frame):
         self.state_scrollbar = tk.Scrollbar(
                                     self.loc_frame,
                                     orient=tk.VERTICAL,
-                                    command=self._onMousewheel)
+                                    command=self._on_mousewheel)
         self.state_lbox = tk.Listbox(
                                 self.loc_frame,
                                 yscrollcommand=self.state_scrollbar.set,
@@ -63,7 +86,7 @@ class GetDataApp(tk.Frame):
                                 )
         for state in self.state_abbrs:
             self.state_lbox.insert(tk.END, state)
-        self.state_lbox.bind("<<ListboxSelect>>", self._onSelect)
+        self.state_lbox.bind("<<ListboxSelect>>", self._on_select)
         self.state_scrollbar.config(command=self.state_lbox.yview)
 
         self.state_selected_frame = tk.Frame(self.root)
@@ -101,17 +124,17 @@ class GetDataApp(tk.Frame):
         self.confirm_button = tk.Button(
                                     self.btns_frame,
                                     text="Confirm",
-                                    command=self._extractEntryFields
+                                    command=self._extract_entry_fields
                                     )
-        self.confirm_button.bind("<Return>", self._extractEntryFields)
+        self.confirm_button.bind("<Return>", self._extract_entry_fields)
         self.quit_button = tk.Button(
                                 self.btns_frame,
                                 text="Quit",
-                                command=self._exitApp
+                                command=self._exit_app
                                 )
-        self.quit_button.bind("<Return>", self._exitApp)
+        self.quit_button.bind("<Return>", self._exit_app)
 
-    def _setWidgets(self):
+    def _set_widgets(self):
         """Packs the widgets according my personal app design."""
         self.loc_frame.pack()
         self.city_label.pack()
@@ -137,26 +160,21 @@ class GetDataApp(tk.Frame):
         self.confirm_button.pack(side=tk.LEFT)
         self.quit_button.pack(side=tk.LEFT)
 
-    def _onSelect(self, *event):
+    def _on_select(self, event):
         """Updates the state selected variable to the choice that the user
         stops at when selecting the state in the listbox widget.
 
-        Parameters
-        ==========
-        event (tk.Event) : Optional parameter provided for buttons that have
-            a key stroke binded to them.
-
         """
-        widget = event.widget
+        wdgt = event.widget
         try:
-            index = int(widget.curselection()[0])
+            index = int(wdgt.curselection()[0])
         except IndexError:
             pass
         else:
-            value = widget.get(index)
+            value = wdgt.get(index)
             self.state_selected_var.set(value)
 
-    def _onMousewheel(self, *event):
+    def _on_mousewheel(self, *event):
         """Allows the mousewheel to be used for scrolling in widgets.
 
         Parameters
@@ -167,7 +185,7 @@ class GetDataApp(tk.Frame):
         """
         self.root.yview_scroll(-1*(event.delta/120), "units")
 
-    def _extractSearchTerms(self):
+    def _extract_search_terms(self):
         """Extracts and strips the search terms of whitespace on both sides.
 
         Returns
@@ -179,7 +197,7 @@ class GetDataApp(tk.Frame):
         search_terms = [term.strip() for term in input_terms.split(sep = ",")]
         return search_terms
 
-    def _extractEntryFields(self, *event):
+    def _extract_entry_fields(self, *event):
         """If all of the data has been enter, the data is retrieved the from
         the entry fields in the app and stores in a dictionary, then exits app
         after data retrieval; otherwise, if all of the data isn't filled in
@@ -193,7 +211,7 @@ class GetDataApp(tk.Frame):
         """
         city = self.city_entry.get().strip()
         state = self.state_selected_var.get()
-        search_terms = self._extractSearchTerms()
+        search_terms = self._extract_search_terms()
         num_results = self.num_results_radio_var.get()
 
         if city and state and search_terms and num_results:
@@ -202,12 +220,12 @@ class GetDataApp(tk.Frame):
                              "search_terms": search_terms,
                              "num_results": num_results
                              }
-            self._exitApp()
+            self._exit_app()
         else:
             error_msg = "Fill in all of the fields."
-            self._showErrorMsgBox(error_msg)
+            self._show_error_msgBox(error_msg)
 
-    def _exitApp(self, *event):
+    def _exit_app(self, *event):
         """Uses the quit method of tk.Tk() to close the application interface.
 
         Parameters
@@ -218,7 +236,7 @@ class GetDataApp(tk.Frame):
         """
         self.root.quit()
 
-    def _showErrorMsgBox(self, error_msg):
+    def _show_error_msgBox(self, error_msg):
         """Creates a message box with the given error text to print to the
         screen.
 
@@ -229,7 +247,7 @@ class GetDataApp(tk.Frame):
         """
         msgBox.showinfo("ERROR", error_msg)
 
-    def getData(self):
+    def get_data(self):
         """Creates a dictionary of the data provided from the app.
 
         Returns
@@ -243,8 +261,10 @@ class GetDataApp(tk.Frame):
 
 def main():
     app_root = tk.Tk()
-    get_data_app = GetDataApp(app_root)
-    get_data_app.mainloop()
+    app = GetDataApp(app_root)
+    app.mainloop()
+
+    app.destroy()
 
 if __name__ == "__main__":
     main()
