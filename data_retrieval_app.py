@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 """
                     App for Collecting User Data for Indeed.com
     Author: Zach Churchill
@@ -257,14 +258,3 @@ class GetDataApp(tk.Frame):
 
         """
         return self.data_dict
-
-
-def main():
-    app_root = tk.Tk()
-    app = GetDataApp(app_root)
-    app.mainloop()
-
-    app.destroy()
-
-if __name__ == "__main__":
-    main()
