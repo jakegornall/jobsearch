@@ -4,7 +4,7 @@ import sys
 import tkinter as tk
 from data_retrieval_app import get_user_data, GetDataApp
 from indeed_functions import format_location, format_search_terms
-from indeed_functions import prepare_url, request_page, job_search_results
+from indeed_functions import prepare_url, request_page, retrieve_job_search_results, display_job_search_results
 
 def main():
     user_data = get_user_data()
@@ -13,7 +13,8 @@ def main():
 
     page_url = prepare_url(user_data)
     soup = request_page(page_url)
-    job_search_results(soup, user_data["num_results"])
+    job_urls = retrieve_job_search_results(soup, user_data["num_results"])
+    display_job_search_results(job_urls)
 
 if __name__ == "__main__":
     main()

@@ -6,7 +6,7 @@
     Python Version: 3.5.2
     Description: Functions used specifically to format and open job postings
         from Indeed.com - thus, some values such as the location format, base
-        url, and HTML tags have been hardcoded. 
+        url, and HTML tags have been hardcoded.
 """
 
 import re
@@ -103,23 +103,39 @@ def request_page(page_url):
             sys.exit()
 
 
-def job_search_results(soup, num_search_results):
-    """Retrives the number of results from Indeed.com (by relevance).
+def retrieve_job_search_results(soup, num_search_results):
+    """Retrieves the number of results from Indeed.com (by relevance).
 
     Parameters
-    ----------
+    ==========
     soup (BeautifulSoup) : BeautifulSoup object containing the HTML for
         the given location and search terms for the job search.
 
     num_search_results (int) : Integer representing the number of search
         results that the user desires to see.
 
+    Returns
+    ==========
+    job_urls (list) : List of strings corresponding to URLs for jobs.
+
     """
+    job_urls = []
     counter = 0
     for link in soup.find_all("a", {"data-tn-element": "jobTitle"}):
         if counter < num_search_results:
-            job_url = "https://www.indeed.com" + link.get("href")
-            webbrowser.open(job_url, new=0, autoraise=False)
+            job_urls.append("https://www.indeed.com" + link.get("href"))
             counter += 1
         else:
             break
+    return job_urls
+
+def display_job_search_results(job_urls):
+    """Opens the job urls in a new (default) browser of the machine.
+
+    Parameters
+    ==========
+    job_urls (list) : List of strings corresponding to URLs for jobs.
+
+    """
+    for job_url in job_urls:
+        webbrowser.open(job_url, new=1)
