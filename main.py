@@ -2,30 +2,9 @@
 
 import sys
 import tkinter as tk
-from data_retrieval_app import GetDataApp
+from data_retrieval_app import get_user_data, GetDataApp
 from indeed_functions import format_location, format_search_terms
 from indeed_functions import prepare_url, request_page, job_search_results
-
-def get_user_data():
-    """Retrieves the users data via the GetDataApp GUI; otherwise, exits the
-    program (if user quits the GUI).
-
-    Returns
-    =======
-    user_data (dict) : A dictionary with keys corresponding to the city, state,
-        search terms, and number of search results obtained from the GUI.
-
-    """
-    root = tk.Tk()
-    user_data_app = GetDataApp(root)
-    user_data_app.mainloop()
-
-    try:
-        user_data = user_data_app.get_data()
-    except AttributeError:
-        sys.exit()
-    else:
-        return user_data
 
 def main():
     user_data = get_user_data()

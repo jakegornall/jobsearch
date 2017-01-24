@@ -4,7 +4,8 @@
                     App for Collecting User Data for Indeed.com
     Author: Zach Churchill
     Python Version: 3.5.2
-    Description: Created using tkinter, this app displays a form to the user
+    Description: Contains a function that acts as the main function for
+        initializing the app with a tk.Tk(). The app displays a form to the user
         with the following fields: city, state, search terms, and number of
         results. Both the city and search terms require the user to fill in
         information via the keyboard, and user input is not validation in that
@@ -28,6 +29,27 @@
 import csv
 import tkinter as tk
 from tkinter import messagebox as msgBox
+
+def get_user_data():
+    """Retrieves the users data via the GetDataApp GUI; otherwise, exits the
+    program (if user quits the GUI).
+
+    Returns
+    =======
+    user_data (dict) : A dictionary with keys corresponding to the city, state,
+        search terms, and number of search results obtained from the GUI.
+
+    """
+    root = tk.Tk()
+    user_data_app = GetDataApp(root)
+    user_data_app.mainloop()
+
+    try:
+        user_data = user_data_app.get_data()
+    except AttributeError:
+        sys.exit()
+    else:
+        return user_data
 
 class GetDataApp(tk.Frame):
     """Displays a GUI for the retrieval of data corresponding to information
