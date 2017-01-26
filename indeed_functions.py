@@ -120,13 +120,9 @@ def retrieve_job_search_results(soup, num_search_results):
 
     """
     job_urls = []
-    counter = 0
-    for link in soup.find_all("a", {"data-tn-element": "jobTitle"}):
-        if counter < num_search_results:
-            job_urls.append("https://www.indeed.com" + link.get("href"))
-            counter += 1
-        else:
-            break
+    job_titles = soup.find_all("a", {"data-tn-element": "jobTitle"})
+    for link in job_titles[:num_search_results]:
+        job_urls.append("https://www.indeed.com" + link.get("href"))
     return job_urls
 
 def display_job_search_results(job_urls):
