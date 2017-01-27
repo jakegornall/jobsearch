@@ -8,3 +8,9 @@ desktop for easy searching of jobs.
 This project has tested me and helped develop my skills not only in becoming a Pythonic programmer, 
 but also in software development practices, i.e. writing tests for validation, using Git to track 
 my progress, and planning before coding.
+
+### Installation and Usage:
+1. Clone repository.
+2. Run the file: `install_requirements.sh`
+3. In your terminal, navigate to the root directory.
+4. Execute the command: `python main.py`
