@@ -26,6 +26,7 @@
         Lastly, after retrieving the data, destroy the app:
             > app.destroy()
 """
+import sys
 import csv
 import tkinter as tk
 from tkinter import messagebox as msgBox
