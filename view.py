@@ -31,38 +31,17 @@ import csv
 import tkinter as tk
 from tkinter import messagebox as msgBox
 
-def get_user_data():
-    """Retrieves the users data via the GetDataApp GUI; otherwise, exits the
-    program (if user quits the GUI).
-
-    Returns
-    =======
-    user_data (dict) : A dictionary with keys corresponding to the city, state,
-        search terms, and number of search results obtained from the GUI.
-
-    """
-    root = tk.Tk()
-    user_data_app = GetDataApp(root)
-    user_data_app.mainloop()
-
-    try:
-        user_data = user_data_app.get_data()
-    except AttributeError:
-        sys.exit()
-    else:
-        return user_data
-
-class GetDataApp(tk.Frame):
+class IndeedAppView(tk.Frame):
     """Displays a GUI for the retrieval of data corresponding to information
     needed for Indeed.com.
 
     """
     STATE_ABBR_FILE = "postal_codes.txt"
 
-    def __init__(self, root):
-        tk.Frame.__init__(self, root)
-        self.root = root
-        self.state_abbrs = GetDataApp._get_state_abbr()
+    def __init__(self):
+        self.root = tk.Tk()
+        tk.Frame.__init__(self, self.root)
+        self.state_abbrs = IndeedAppView._get_state_abbr()
 
         self._set_app_window()
         self._initialize_widgets()
@@ -77,7 +56,7 @@ class GetDataApp(tk.Frame):
 
         """
         state_abbrs = []
-        with open(GetDataApp.STATE_ABBR_FILE) as f_obj:
+        with open(IndeedAppView.STATE_ABBR_FILE) as f_obj:
             reader = csv.reader(f_obj)
             for row in reader:
                 state_abbrs.append(row[0])
