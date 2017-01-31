@@ -6,5 +6,5 @@ easier data collection using the MVC design pattern. The end result of the proje
 that can be placed on a desktop for easy searching of jobs.
 
 This project has tested me and helped develop my skills not only in becoming a Pythonic programmer, 
-but also in software development practices, i.e. writing tests for validation, using Git to track 
-my progress, and implementing the MVC design pattern.
+but also in software development practices, i.e. using Git to track my progress, and implementing the 
+MVC design pattern.
