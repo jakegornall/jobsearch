@@ -17,7 +17,7 @@
         not allow the user to leave fields blank/unchecked.
 """
 
-from app.controller import IndeedAppController
+from controller import IndeedAppController
 
 def main():
     app_controller = IndeedAppController()
