@@ -11,8 +11,8 @@
 """
 
 import sys
-from model import IndeedAppModel
-from view import IndeedAppView
+from .model import IndeedAppModel
+from .view import IndeedAppView
 
 class IndeedAppController(object):
 
