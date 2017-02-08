@@ -12,18 +12,17 @@
         amount of choices for the desired number of results.
 """
 
-import sys
 import csv
 import tkinter as tk
 from tkinter import messagebox as msgBox
+
+STATE_ABBR_FILE_PATH = "app/data/postal_codes.txt"
 
 class IndeedAppView(tk.Frame):
     """Displays a GUI for the retrieval of data corresponding to information
     needed for Indeed.com.
 
     """
-    STATE_ABBR_FILE = "postal_codes.txt"
-
     def __init__(self):
         self.root = tk.Tk()
         tk.Frame.__init__(self, self.root)
@@ -42,7 +41,7 @@ class IndeedAppView(tk.Frame):
 
         """
         state_abbrs = []
-        with open(IndeedAppView.STATE_ABBR_FILE) as f_obj:
+        with open(STATE_ABBR_FILE_PATH) as f_obj:
             reader = csv.reader(f_obj)
             for row in reader:
                 state_abbrs.append(row[0])
