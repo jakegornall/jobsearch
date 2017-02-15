@@ -1,43 +1,28 @@
 #!/usr/bin/python3
 
 """
-                    App for Collecting User Data for Indeed.com
+                View portion of MVC for Indeed Job Search App
     Author: Zach Churchill
     Python Version: 3.5.2
-    Description: Contains a function that acts as the main function for
-        initializing the app with a tk.Tk(). The app displays a form to the user
-        with the following fields: city, state, search terms, and number of
-        results. Both the city and search terms require the user to fill in
-        information via the keyboard, and user input is not validation in that
-        the user can enter whatever he/she desires. The state field is a list
-        box that allows the user to choose the corresponding state abbreviation
-        for their location. Lastly, the number of search terms is a set of
-        radio buttons that, by default, only allow the user to fill in one.
-        An important feature of the app is that the user must fill in/select
-        an option from each field in order to continue; that is, the app does
-        not allow the user to leave fields blank/unchecked.
-    Implementation: In order to implement the app, the following lines of code
-        must be placed in a function:
-            > root = tk.Tk()
-            > app = GetDataApp(root)
-            > app.mainloop()
-        To retrieve the data collected via the app:
-            > data = app.get_data()
-        Lastly, after retrieving the data, destroy the app:
-            > app.destroy()
+    Description: This file contains the Indeed App view. The view for the app
+        was created using Tkinter, and is used to provide a native looking GUI
+        for the user to input the necessary data for performing the job search.
+        The GUI provides fields to enter in the city and search terms, along
+        with a fixed list of state abbreviations to choose from and a fixed
+        amount of choices for the desired number of results.
 """
-import sys
+
 import csv
 import tkinter as tk
 from tkinter import messagebox as msgBox
+
+STATE_ABBR_FILE_PATH = "app/data/postal_codes.txt"
 
 class IndeedAppView(tk.Frame):
     """Displays a GUI for the retrieval of data corresponding to information
     needed for Indeed.com.
 
     """
-    STATE_ABBR_FILE = "postal_codes.txt"
-
     def __init__(self):
         self.root = tk.Tk()
         tk.Frame.__init__(self, self.root)
@@ -56,7 +41,7 @@ class IndeedAppView(tk.Frame):
 
         """
         state_abbrs = []
-        with open(IndeedAppView.STATE_ABBR_FILE) as f_obj:
+        with open(STATE_ABBR_FILE_PATH) as f_obj:
             reader = csv.reader(f_obj)
             for row in reader:
                 state_abbrs.append(row[0])

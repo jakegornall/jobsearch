@@ -1,12 +1,28 @@
 #!/usr/bin/python3
 
+"""
+                Model portion of MVC for Indeed Job Search App
+    Author: Zach Churchill
+    Python Version: 3.5.2
+    Description: This file contains the Indeed App model. Within this model is
+        the necessary data to perform a basic search on Indeed.com, where the
+        data necessary are the location, search terms and number of results.
+        Moreover, the model contains the necessary functions that are needed to
+        interact with Indeed.com itself through the use of requests, webbrowser,
+        and BeautifulSoup via hardcoded data like the url and the required
+        format of the location and search terms.
+"""
+
 import sys
 import requests
 import webbrowser
 from bs4 import BeautifulSoup
 
 class IndeedAppModel(object):
+    """Representation of the necessary data and functions needed to interact
+    with Indeed.com.
 
+    """
     def __init__(self):
         url = "https://www.indeed.com/jobs?q={search_terms}&l={location}"
         self.url = url
@@ -72,13 +88,27 @@ class IndeedAppModel(object):
         return page_url
 
     def initialize_data(self, *, city, state, search_terms, num_results):
+        """Provides a setter function for the controller to call once the data
+        is retrieved from the view. The location and search terms are
+        immediately formatted according to the standards set by Indeed.com.
+
+        Parameters (All are keyword enforced)
+        ==========
+        city (str) : String corresponding to the city name that the user
+            entered into the text field of the view GUI.
+        state (str) : String corresponding to the state abbreviation that the
+            user chose in the view GUI.
+        search_terms (list) : List of strings separated by commas corresponding
+            to the search terms that were entered by the user in the text field
+            of the view GUI.
+        num_results (int) : Integer corresponding to the number of results that
+            the user chose from the view GUI.
+
+        """
         self.location = IndeedAppModel._format_location(city=city, state=state)
         self.search_terms = IndeedAppModel._format_search_terms(search_terms)
         self.num_results = num_results
         self.page_url = self._prepare_url()
-
-    def get_page_url(self):
-        return self.page_url
 
     def request_page(self):
         """Requests the page given by the page url and creates a soup variable,
